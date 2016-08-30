@@ -1,5 +1,6 @@
 # Skyscraper
 
+[![Build Status](https://travis-ci.org/nylar/skyscraper.svg?branch=master)](https://travis-ci.org/nylar/skyscraper)
 [![GoDoc](https://godoc.org/github.com/nylar/skyscraper?status.svg)](http://godoc.org/github.com/nylar/skyscraper)
 [![License](https://img.shields.io/badge/license-CC0-blue.svg)](LICENSE)
 
