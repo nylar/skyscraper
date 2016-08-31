@@ -117,16 +117,15 @@ func (s *Scraper) process(domain string) {
 	response := &Response{
 		Domain: domain,
 	}
+	defer func() { s.Out <- response }()
 
 	resp, err := s.client.Get(domain)
 	if err != nil {
 		response.Err = err
-		s.Out <- response
 		return
 	}
 	if resp.StatusCode >= http.StatusBadRequest {
 		response.Err = StatusError{Err: ErrNoSuccessfulResponse, Code: resp.StatusCode}
-		s.Out <- response
 		return
 	}
 	defer resp.Body.Close()
@@ -134,10 +133,8 @@ func (s *Scraper) process(domain string) {
 	body, err := ioutil.ReadAll(io.LimitReader(resp.Body, maxSize))
 	if err != nil {
 		response.Err = err
-		s.Out <- response
 		return
 	}
 
 	response.Body = bytes.NewReader(body)
-	s.Out <- response
 }
