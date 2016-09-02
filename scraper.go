@@ -121,7 +121,7 @@ func (s *Scraper) process(domain string) {
 	}
 	defer func() { s.Out <- response }()
 
-	if !strings.HasPrefix(domain, "http://") || !strings.HasPrefix(domain, "https://") || !strings.HasPrefix(domain, "//") {
+	if !strings.HasPrefix(domain, "http://") && !strings.HasPrefix(domain, "https://") && !strings.HasPrefix(domain, "//") {
 		domain = "http://" + domain
 	}
 
