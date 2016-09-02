@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -39,9 +40,10 @@ func (se StatusError) Error() string {
 // Response is returned by the scraper, a non-nil error indicates that
 // something went wrong and should be checked before inspecting the Body
 type Response struct {
-	Domain string
-	Body   io.Reader
-	Err    Error
+	Domain     string
+	Body       io.Reader
+	Err        Error
+	StatusCode int
 }
 
 // Scraper represents a web scraper
@@ -119,6 +121,10 @@ func (s *Scraper) process(domain string) {
 	}
 	defer func() { s.Out <- response }()
 
+	if !strings.HasPrefix(domain, "http://") || !strings.HasPrefix(domain, "https://") || !strings.HasPrefix(domain, "//") {
+		domain = "http://" + domain
+	}
+
 	resp, err := s.client.Get(domain)
 	if err != nil {
 		response.Err = err
@@ -129,6 +135,8 @@ func (s *Scraper) process(domain string) {
 		return
 	}
 	defer resp.Body.Close()
+
+	response.StatusCode = resp.StatusCode
 
 	body, err := ioutil.ReadAll(io.LimitReader(resp.Body, maxSize))
 	if err != nil {
