@@ -41,7 +41,7 @@ func (se StatusError) Error() string {
 // something went wrong and should be checked before inspecting the Body
 type Response struct {
 	Domain     string
-	Body       io.Reader
+	Body       io.ReadSeeker
 	Err        Error
 	StatusCode int
 }
